@@ -1,3 +1,5 @@
+from utils import get_model
+from joblib import dump
 from sklearn.datasets import load_digits
 from sklearn.svm import SVC
 from sklearn.model_selection import train_test_split
@@ -14,4 +16,5 @@ def train_model():
 
     model.fit(Xtrain, ytrain)
     ypred = model.predict(Xtest)
+    dump(model, get_model())
     return accuracy_score(ytest, ypred)
