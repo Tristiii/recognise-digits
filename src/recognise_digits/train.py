@@ -7,7 +7,7 @@ from sklearn.metrics import accuracy_score
 
 
 def train_model():
-    X, y = load_digits(return_X_y=True, as_frame=True)
+    X, y = load_digits(return_X_y=True)
     model = SVC()
 
     Xtrain, Xtest, ytrain, ytest = train_test_split(

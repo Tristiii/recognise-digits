@@ -1,3 +1,5 @@
+from predict import predict
+
 import numpy as np
 import cv2
 from PySide6.QtWidgets import (
@@ -18,27 +20,35 @@ class DigitsRecogniser(QWidget):
 
         layout = QVBoxLayout()
 
+        self.description = QLabel('Please write your digit below to be recognised.')
+        layout.addWidget(self.description)
+
         self.canvas = Canvas()
         self.canvas.changed.connect(self.predict_digit)
         layout.addWidget(self.canvas)
 
         self.clear_button = QPushButton()
         self.clear_button.setText('Clear canvas')
+        self.clear_button.clicked.connect(self.canvas.clear)
         layout.addWidget(self.clear_button)
 
         self.prediction = QLabel()
         self.prediction.setStyleSheet(f"""
             background-color: blue;
+            color: white;
             font-weight: bold;
             padding: 10px;
         """)
+        self.prediction.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(self.prediction)
 
         self.setLayout(layout)
 
     def predict_digit(self) -> None:
-        array = self.canvas.to_numpy()
-        # TODO
+        data = self.canvas.to_numpy()
+        prediction = predict(data.reshape(1, -1))
+
+        self.prediction.setText(f'Prediction: {prediction}')
 
 
 class Canvas(QWidget):
@@ -65,7 +75,7 @@ class Canvas(QWidget):
             current_point = event.position().toPoint()
 
             painter = QPainter(self.image)
-            painter.setPen(QPen(Qt.GlobalColor.black, 20))
+            painter.setPen(QPen(Qt.GlobalColor.black, 15))
             painter.drawLine(self.last_point, current_point)
             self.last_point = current_point
             self.update()
@@ -90,3 +100,8 @@ class Canvas(QWidget):
 
         # Flattened and inversed array
         return (16 - scaled).flatten()
+
+    def clear(self) -> None:
+        self.image.fill(255)
+        self.update()
+        self.changed.emit()
