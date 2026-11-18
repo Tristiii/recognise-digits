@@ -1,13 +1,19 @@
 from utils import get_model
 from joblib import dump
-from sklearn.datasets import load_digits
+from sklearn.datasets import fetch_openml
 from sklearn.svm import SVC
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
 
 def train_model():
-    X, y = load_digits(return_X_y=True)
+    X, y = fetch_openml(
+        'mnist_784',
+        version=1,
+        return_X_y=True,
+        as_frame=False,
+        parser='liac-arff'
+    )
     model = SVC()
 
     Xtrain, Xtest, ytrain, ytest = train_test_split(
@@ -17,4 +23,4 @@ def train_model():
     model.fit(Xtrain, ytrain)
     ypred = model.predict(Xtest)
     dump(model, get_model())
-    return accuracy_score(ytest, ypred)
+    # print(accuracy_score(ytest, ypred))

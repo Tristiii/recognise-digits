@@ -16,7 +16,7 @@ class DigitsRecogniser(QWidget):
     def __init__(self) -> None:
         super().__init__()
         self.setFixedSize(300, 400)
-        self.setWindowTitle('Digits recogniser')
+        self.setWindowTitle('Recognise digits')
 
         layout = QVBoxLayout()
 
@@ -30,11 +30,12 @@ class DigitsRecogniser(QWidget):
         self.clear_button = QPushButton()
         self.clear_button.setText('Clear canvas')
         self.clear_button.clicked.connect(self.canvas.clear)
+        self.clear_button.clicked.connect(self.clear)
         layout.addWidget(self.clear_button)
 
-        self.prediction = QLabel()
+        self.prediction = QLabel('Please draw in the canvas')
         self.prediction.setStyleSheet(f"""
-            background-color: blue;
+            background-color: orange;
             color: white;
             font-weight: bold;
             padding: 10px;
@@ -49,6 +50,21 @@ class DigitsRecogniser(QWidget):
         prediction = predict(data.reshape(1, -1))
 
         self.prediction.setText(f'Prediction: {prediction}')
+        self.prediction.setStyleSheet(f"""
+            background-color: blue;
+            color: white;
+            font-weight: bold;
+            padding: 10px;
+        """)
+
+    def clear(self) -> None:
+        self.prediction.setText('Please draw in the canvas')
+        self.prediction.setStyleSheet(f"""
+            background-color: orange;
+            color: white;
+            font-weight: bold;
+            padding: 10px;
+        """)
 
 
 class Canvas(QWidget):
@@ -80,10 +96,9 @@ class Canvas(QWidget):
             self.last_point = current_point
             self.update()
 
-            self.changed.emit()
-
     def mouseReleaseEvent(self, event: QMouseEvent) -> None:
         self.last_point = None
+        self.changed.emit()
 
     # NumPy array of image
     def to_numpy(self) -> np.ndarray:
@@ -95,11 +110,10 @@ class Canvas(QWidget):
         blurred = cv2.GaussianBlur(image, (15, 15), 0)
 
         # Resizing and scaling
-        resized = cv2.resize(blurred, (8, 8))
-        scaled = (resized / 255 * 16).astype(np.uint8)
+        resized = cv2.resize(blurred, (28, 28))
 
         # Flattened and inversed array
-        return (16 - scaled).flatten()
+        return (255 - resized).flatten()
 
     def clear(self) -> None:
         self.image.fill(255)

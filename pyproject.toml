@@ -9,6 +9,7 @@ authors = [
 requires-python = ">=3.14"
 dependencies = [
     "joblib>=1.6.0",
+    "liac-arff>=2.5.0",
     "matplotlib>=3.11.2",
     "numpy>=2.5.4",
     "opencv-python>=5.1.0.95",
