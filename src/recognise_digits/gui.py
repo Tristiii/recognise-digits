@@ -1,4 +1,5 @@
-from predict import predict
+from utils import get_model
+from train import LeNet
 
 import numpy as np
 import cv2
@@ -11,6 +12,8 @@ from PySide6.QtGui import (
 from PySide6.QtCore import (
     Qt, Signal
 )
+
+import torch
 
 class DigitsRecogniser(QWidget):
     def __init__(self) -> None:
@@ -45,11 +48,23 @@ class DigitsRecogniser(QWidget):
 
         self.setLayout(layout)
 
-    def predict_digit(self) -> None:
-        data = self.canvas.to_numpy()
-        prediction = predict(data.reshape(1, -1))
+        self.model = LeNet()
+        self.model.load_state_dict(
+            torch.load(f=get_model())
+        )
 
-        self.prediction.setText(f'Prediction: {prediction}')
+    def predict_digit(self) -> None:
+        X = self.canvas.to_tensor()
+
+        self.model.eval()
+        with torch.inference_mode():
+            y_pred = self.model(X)
+            probs = torch.softmax(y_pred, dim=1)
+
+            prediction = probs.argmax(dim=1).item()
+            chance = torch.max(probs).item()
+
+        self.prediction.setText(f'Prediction: {prediction} ({chance:.1%})')
         self.prediction.setStyleSheet(f"""
             background-color: blue;
             color: white;
@@ -100,20 +115,17 @@ class Canvas(QWidget):
         self.last_point = None
         self.changed.emit()
 
-    # NumPy array of image
-    def to_numpy(self) -> np.ndarray:
-        # Create NumPy array and reshape to image
+    # Convert to tensor
+    def to_tensor(self) -> torch.Tensor:
         bits = self.image.bits()
         image = np.frombuffer(bits, dtype=np.uint8).reshape(300, 300)
 
-        # Gaussian blur
         blurred = cv2.GaussianBlur(image, (15, 15), 0)
-
-        # Resizing and scaling
         resized = cv2.resize(blurred, (28, 28))
 
-        # Flattened and inversed array
-        return (255 - resized).flatten()
+        image = (255 - resized).astype(np.float32) / 255.0
+
+        return torch.from_numpy(image).reshape(1, 1, 28, 28)
 
     def clear(self) -> None:
         self.image.fill(255)
