@@ -23,4 +23,4 @@ The LeNet convolutional neural network (CNN) was applied on the dataset (LeCun e
 
 ## 3. Results
 
-The model obtains an accuracy of ~98%.
+The model obtains an accuracy of 99,3%, a precision of 99,3%, recall of 99,3%, F1-score of 0,993 and an AUROC of 1.000.
