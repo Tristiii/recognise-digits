@@ -1,22 +1,26 @@
-# RecogniseDigits
-A machine learning model that recognises written digits.
+# Recognize Digits
+A machine learning model that recognizes written digits.
 
-## Introduction
+## 1. Introduction
 
-This model is trained on the mnist_784 dataset from OpenML via scikit-learn, found in [this link](https://www.openml.org/search?type=data&sort=runs&id=554&status=active).
+From the beginning of neural networks, one of the most basic problems of machine learning is recognizing handwriting, in particular digits. This has become so popular, that the MNIST-database was created, which contains a lot of handwritten digits to train models on.
 
-To use the model, run main.py in the src folder.
+This model aims to achieve a precise classification of this dataset.
 
-## Methods
+## 2. Methods
 
-A convolutional neural network (CNN) was applied on the dataset. The PyTorch library was used to implement the CNN, with the following hyperparameters:
-- Architecture of the CNN: LeNet (LeCun et al., 1998).
-- Loss function: cross entropy loss.
-- Optimizer: adaptive moment estimation (Adam).
-- Test size: 20%.
-- Batch size: 64.
-- Epochs: 25.
+### 2.1 Dataset
 
-## Results
+This model is trained on the mnist_784 dataset from OpenML via scikit-learn, found in the [following link](https://www.openml.org/search?type=data&sort=runs&id=554&status=active).
+
+Distribution of the dataset:
+- Training: 60.000 samples.
+- Testing: 10.000 samples.
+
+### 2.2 Model
+
+The LeNet convolutional neural network (CNN) was applied on the dataset (LeCun et al., 1998). The PyTorch library was used to implement this neural network.
+
+## 3. Results
 
 The model obtains an accuracy of ~98%.

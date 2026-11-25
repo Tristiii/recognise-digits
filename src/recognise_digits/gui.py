@@ -1,5 +1,5 @@
 from utils import get_model
-from train import LeNet
+from models import LeNet
 
 import numpy as np
 import cv2
@@ -15,15 +15,15 @@ from PySide6.QtCore import (
 
 import torch
 
-class DigitsRecogniser(QWidget):
+class DigitsRecognizer(QWidget):
     def __init__(self) -> None:
         super().__init__()
         self.setFixedSize(300, 400)
-        self.setWindowTitle('Recognise digits')
+        self.setWindowTitle('Recognize digits')
 
         layout = QVBoxLayout()
 
-        self.description = QLabel('Please write your digit below to be recognised.')
+        self.description = QLabel('Please write your digit below to be recognized.')
         layout.addWidget(self.description)
 
         self.canvas = Canvas()
