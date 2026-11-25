@@ -28,10 +28,10 @@ X_train, X_test, y_train, y_test = train_test_split(
 
 # Creating DataLoaders
 train_dataset = TensorDataset(X_train, y_train)
-test_dataset = TensorDataset(X_test, y_test)
+val_dataset = TensorDataset(X_test, y_test)
 
 train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=64)
+val_loader = DataLoader(val_dataset, batch_size=64)
 
 # Creating training environment
 torch.manual_seed(42)
@@ -58,13 +58,13 @@ for epoch in range(25):
 
     model.eval()
     with torch.inference_mode():
-        for X_batch, y_batch in test_loader:
+        for X_batch, y_batch in val_loader:
             y_pred = model(X_batch)
             accuracy_fn.update(y_pred, y_batch)
 
         accuracy = accuracy_fn.compute()
         accuracy_fn.reset()
-        print(f'Epoch {epoch} | Loss: {train_loss:.3f} | Test accuracy: {accuracy:.2%}')
+        print(f'Epoch {epoch} | Loss: {train_loss:.3f} | Validation accuracy: {accuracy:.2%}')
 
 # Saving the model
 torch.save(obj=model.state_dict(), f=get_model())
