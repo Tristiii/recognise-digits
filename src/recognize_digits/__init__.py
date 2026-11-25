@@ -1,2 +1,2 @@
 def main() -> None:
-    print("Hello from recognise-digits!")
+    print("Hello from recognize-digits!")
